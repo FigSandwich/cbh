@@ -5,9 +5,9 @@ import javax.validation.constraints.NotEmpty;
 public class UserVO {
 
 	private int mno;
-	@NotEmpty(message = "id ¸¦ ÀÔ·ÂÇÏ¼¼¿ä")
+	@NotEmpty(message = "idë¥¼ ìž…ë ¥í•´ì£¼ì„¸ìš” ")
 	private String userId;
-	@NotEmpty(message = "ÆÐ½º¿öµå ¸¦ ÀÔ·ÂÇÏ¼¼¿ä")
+	@NotEmpty(message = "pwdë¥¼ ìž…ë ¥í•´ì£¼ì„¸ìš”")
 	private String passwd;
 	private String name;
 	private String jumin;

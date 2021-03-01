@@ -37,8 +37,7 @@ public class mBoardController {
 	private BoardService boardService;
 
 	private String uploadPath = "C:\\upload\\";
-	
-	
+
 	@RequestMapping(value = "/listhome", method = RequestMethod.GET)
 	public String listhome(@ModelAttribute("searchVO") SearchVO searchVO, Model model, HttpSession session)
 			throws Exception {
@@ -68,26 +67,25 @@ public class mBoardController {
 
 	@RequestMapping(value = "/write.do", method = RequestMethod.POST)
 	public String boardWriteProc(@ModelAttribute("Board") BoardVO board, MultipartHttpServletRequest request) {
-		// 새 글저장
+
 		String content = board.getContent().replaceAll("\r\n", "<br/>");
-		// java새줄 코드 HTML줄바꾸기로
+
 		content = content.replaceAll("<", "&lt;");
 		content = content.replaceAll(">", "&gt;");
 		content = content.replaceAll("&", "&amp;");
 		content = content.replaceAll("\"", "&quot;");
 		board.setContent(content);
 		boardService.writeArticle(board);
-		int bno = board.getBno(); // 저장시 생성한 새글번호 xml 파일insert 에서 keyProperty="bno" 에 의해서 설정됨
-		// 첨부 파일 저장
+		int bno = board.getBno();
 		AttFileVO file = new AttFileVO();
 		String uploadPath = "C:\\upload\\";
 		List<MultipartFile> fileList = request.getFiles("file");
 		for (MultipartFile mf : fileList) {
 			if (!mf.isEmpty()) {
 				String originFileName = mf.getOriginalFilename();
-				// 원본 파일 명
+
 				long fileSize = mf.getSize();
-				// 파일 사이즈
+
 				System.out.println("originFileName : " + originFileName);
 				System.out.println("fileSize : " + fileSize);
 				file.setBno(bno);
@@ -95,12 +93,11 @@ public class mBoardController {
 				file.setSfilename(originFileName);
 				file.setFilesize(fileSize);
 				boardService.insertFile(file);
-				// 테이블에 화일 정보 저장
+
 				String safeFile = uploadPath + originFileName;
-				// 디스크에 파일 저장
+
 				try {
 					mf.transferTo(new File(safeFile));
-					// 디스크에 파일 저장
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -117,48 +114,45 @@ public class mBoardController {
 		String userId = (String) session.getAttribute("userId");
 		BoardViewVO boardViewVO = new BoardViewVO();
 
-		// 글조회 이력 용
+
 		boardViewVO.setBno(bno);
-		if (userId != null) { // 회원인 경우
+		if (userId != null) { 
 
 			boardViewVO.setUserId(userId);
-			boardViewVO.setMem_yn('y'); // 회원
+			boardViewVO.setMem_yn('y');
 			if (boardService.getBoardView(boardViewVO) == 0) {
 
-				// 해당 번호 글을 읽은 기록이 없으면
+				
 
 				boardService.incrementViewCnt(bno);
 
-				// 조회수 갱신
+		
 
 				boardService.addBoardView(boardViewVO);
 
-				// 회원 조회 등록
+
 
 			}
 		} else {
 
-			// 비회원인 경우
+
 
 			boardViewVO.setUserId(session.getId());
 
-			// 세션id를 회원 id로 등록
-
 			boardViewVO.setMem_yn('n');
 
-			// 비회원
+	
 			if (boardService.getBoardView(boardViewVO) == 0) {
 				{
 
-					// 해당 번호 글을 읽은 기록이 없으면
+					
 
 					boardService.incrementViewCnt(bno);
 
-					// 조회수 갱신
+			
 
 					boardService.addBoardView(boardViewVO);
 
-					// 비회원 조회수 등록
 
 				}
 			}
@@ -169,11 +163,11 @@ public class mBoardController {
 		// get selected article model
 		List<ReplyVO> reply = boardService.getReplyList(bno);
 
-		// 답변 목록 읽어 오
+
 
 		List<AttFileVO> fileList = boardService.getFileList(bno);
 
-		// 첨부파일 목록 읽어 오기
+
 		model.addAttribute("board", board);
 		model.addAttribute("replyList", reply);
 		model.addAttribute("fileList", fileList);
@@ -191,18 +185,18 @@ public class mBoardController {
 		board.setContent(content);
 		if (!userId.equals(board.getWriterId())) {
 
-			// 비회원 글수정 불가
+		
 
 			model.addAttribute("errCode", "1");
 			model.addAttribute("bno", bno);
 			return "redirect:view.do";
 		} else {
 
-			// 회원 글수정
+
 
 			List<AttFileVO> fileList = boardService.getFileList(bno);
 
-			// 첨부파일 읽어 오기 - list
+		
 
 			model.addAttribute("board", board);
 			model.addAttribute("fileList", fileList);
@@ -210,17 +204,17 @@ public class mBoardController {
 		}
 	}
 
-	@RequestMapping(value = "/modify.do", method = RequestMethod.POST) // 게시판 글 수정
+	@RequestMapping(value = "/modify.do", method = RequestMethod.POST) 
 	public String boardModifyProc(@ModelAttribute("Board") BoardVO board, MultipartHttpServletRequest request,
 			RedirectAttributes rea) {
 		String content = board.getContent().replaceAll("\r\n", "<br />");
 
-		// java 새줄 코드 HTML줄바꾸기로
+
 
 		board.setContent(content);
 		boardService.updateArticle(board);
 		int bno = board.getBno();
-		// 체크된 파일을 테이블과 디스크에서 삭제한다.
+
 
 		String[] fileno = request.getParameterValues("fileno");
 		if (fileno != null) {
@@ -233,20 +227,20 @@ public class mBoardController {
 			}
 		}
 		AttFileVO file = new AttFileVO();
-		// 새첨부 파일 목록 일어오기
+
 		List<MultipartFile> fileList = request.getFiles("file");
 		for (MultipartFile mf : fileList) {
 			if (!mf.isEmpty()) {
-				String originFileName = mf.getOriginalFilename(); // 새첨부파일 원본 파일 명
-				long fileSize = mf.getSize(); // 파일 사이즈
+				String originFileName = mf.getOriginalFilename(); // 占쏙옙첨占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙
+				long fileSize = mf.getSize(); // 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙
 				file.setBno(bno);
 				file.setFilesize(fileSize);
 				file.setOfilename(originFileName);
 				file.setSfilename(originFileName);
-				boardService.insertFile(file); // 테이블에 파일 저장
+				boardService.insertFile(file); // 占쏙옙占싱븝옙 占쏙옙占쏙옙 占쏙옙占쏙옙
 				String safeFile = uploadPath + originFileName;
 				try {
-					mf.transferTo(new File(safeFile)); // 디스크에 파일 저장
+					mf.transferTo(new File(safeFile)); // 占쏙옙크占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -260,33 +254,33 @@ public class mBoardController {
 
 	@RequestMapping("/delete.do")
 	public String boardDelete(HttpServletRequest request, HttpSession session, RedirectAttributes rea) {
-		String userId = (String) session.getAttribute("userId"); // login 개발뒤 삭제
+		String userId = (String) session.getAttribute("userId"); 
 
 		int bno = Integer.parseInt(request.getParameter("bno"));
 		BoardVO board = boardService.getArticle(bno);
 		String setView = "";
 		if (userId.equals(board.getWriterId())) {
 
-			// 답글 삭제
+
 
 			List<ReplyVO> reply = boardService.getReplyList(bno);
 			if (reply.size() > 0) {
 				boardService.deleteReplyBybno(bno);
-			} // 첨부 파일명 삭제, 실제 파일 삭제
+			}
 
 			List<AttFileVO> files = boardService.getFileList(bno);
 			if (files.size() > 0) {
 
-				// 저장된 실제 파일 삭제
+		
 
 				for (AttFileVO filedel : files) {
 					String f_stor_all = filedel.getOfilename();
 					File f = new File(session.getServletContext().getRealPath("/") + f_stor_all);
 					f.delete();
 				}
-				boardService.deleteFileBybno(bno); // 테이블에서 해당 번호 글 첨부 file 전체 삭제
+				boardService.deleteFileBybno(bno);
 			}
-			// board 삭제
+
 
 			boardService.deleteArticle(bno);
 			setView = "redirect:list.do";
@@ -314,22 +308,22 @@ public class mBoardController {
 		boardLike.setUserId(userId);
 		BoardVO board = boardService.getArticle(bno);
 		if (board.getWriterId().equals(userId)) {
-			rea.addAttribute("errCode", "3"); // 본인 글은 추천 불가
+			rea.addAttribute("errCode", "3"); 
 
 		} else {
 			if (boardService.getBoardLike(boardLike) == 0) {
 
-				// 이미 추천한 기록이 없으면
+		
 
 				boardService.incrementGoodCnt(bno);
 				boardService.addBoardLike(boardLike);
 
-				// 추천 기록 등록
+		
 
 			} else {
 				rea.addAttribute("errCode", "2");
 
-				// 이미 추천했던 글이면 추천 불가
+		
 
 			}
 		}
@@ -402,13 +396,11 @@ public class mBoardController {
 	@ResponseBody
 	public byte[] downProcess(HttpServletResponse response, @RequestParam String fileName) throws IOException {
 		File file = new File("c:/upload/" + fileName);
-		byte[] bytes = FileCopyUtils.copyToByteArray(file); // SPRING 5.0 이상
+		byte[] bytes = FileCopyUtils.copyToByteArray(file); 
 		String fn = new String(file.getName().getBytes(), "iso_8859_1");
 		response.setHeader("Content-Disposition", "attachment;filename=\"" + fn + "\"");
 		response.setContentLength(bytes.length);
 		return bytes;
 	}
-	
-
 
 }

@@ -47,7 +47,7 @@ public class HomeController {
 		return "home";
 	}
 
-	// °í°´¹®ÀÇ
+	
 	@RequestMapping(value = "/insertcustomer.do", method = RequestMethod.GET)
 	public String insertcustomer(@ModelAttribute("customerVO") CustomerVO customerVO, HttpSession session,
 			HttpServletRequest request) throws Exception {
@@ -63,7 +63,7 @@ public class HomeController {
 		return "home";
 	}
 
-	// °í°´¹®ÀÇ Á¶È¸
+
 	@RequestMapping(value = "/customer.do", method = RequestMethod.GET)
 	public String customer(@ModelAttribute("CustomerVO") CustomerVO customerVO, Model model, HttpSession session)
 			throws Exception {

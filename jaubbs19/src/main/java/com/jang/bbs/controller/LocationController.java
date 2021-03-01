@@ -26,7 +26,7 @@ public class LocationController {
 	@Autowired
 	private LoginService loginService;
 
-	// 위치 조회
+
 	@RequestMapping(value = "/location_list.do", method = RequestMethod.GET)
 	public String Locaiton(@ModelAttribute("location") Location location, Model model, HttpSession session)
 			throws Exception {
@@ -36,7 +36,7 @@ public class LocationController {
 
 		if (loginUser == null) {
 			model.addAttribute("userId", "");
-			model.addAttribute("errCode", 1);// 등록되지않은 아이디
+			model.addAttribute("errCode", 1);
 			return "/member/login";
 		}
 		model.addAttribute("userVO", loginUser);
@@ -48,7 +48,7 @@ public class LocationController {
 		return "location/location_list";
 	}
 
-	// 위치 저장
+
 	@RequestMapping(value = "/iamhere.do", method = RequestMethod.GET)
 	public String insertLoc(@ModelAttribute("location") Location location, HttpSession session,
 			HttpServletRequest request) throws Exception {
@@ -67,7 +67,7 @@ public class LocationController {
 	 * location) throws Exception { location.insertLoc(l); return null; }
 	 */
 
-	// 회원별 위치조회
+
 	@RequestMapping(value = "/userlistlocation.do", method = RequestMethod.GET)
 	public String userlistlocation(@ModelAttribute("location") Location location, Model model, HttpSession session)
 			throws Exception {
@@ -78,8 +78,7 @@ public class LocationController {
 		return "location/userlistlocation";
 	}
 
-	////// 모바일/////////////////////////////////////////////////////////////////////
-	// 위치조회
+	
 	@RequestMapping(value = "/m.location_list.do", method = RequestMethod.GET)
 	public String mLocaiton(@ModelAttribute("location") Location location, Model model, HttpSession session)
 			throws Exception {
@@ -89,7 +88,7 @@ public class LocationController {
 
 		if (loginUser == null) {
 			model.addAttribute("userId", "");
-			model.addAttribute("errCode", 1);// 등록되지않은 아이디
+			model.addAttribute("errCode", 1);
 			return "/mobile/mlogin";
 		}
 		model.addAttribute("userVO", loginUser);
@@ -101,7 +100,7 @@ public class LocationController {
 		return "location/mlocation_list";
 	}
 
-	// 회원별 위치조회
+
 	@RequestMapping(value = "/m.userlistlocation.do", method = RequestMethod.GET)
 	public String muserlistlocation(@ModelAttribute("location") Location location, Model model, HttpSession session)
 			throws Exception {

@@ -13,15 +13,15 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 		Object userId = request.getSession().getAttribute("userId");
 		if (request.getRequestURI().equals("/bbs/member/login.do")
-				|| request.getRequestURI().equals("/bbs/member/joinForm.do") // 회원가입
-				|| request.getRequestURI().equals("/bbs/member/checkid.do") // 중복체크
-				|| request.getRequestURI().equals("/bbs/member/edituser.do") // 회원정보수정
-				|| request.getRequestURI().equals("/bbs/member/updateLoc.do") // 기기코드 저장
-				|| request.getRequestURI().equals("/bbs/member/findId.do") // 아디찾기
-				|| request.getRequestURI().equals("/bbs/member/editPass.do") //비번찾기
-				|| request.getRequestURI().equals("/bbs/member/loginSuccess.do") //로그인후
-				|| request.getRequestURI().equals("/bbs/member/mypage.do") // 마이페이지
-				|| request.getRequestURI().equals("/bbs/member/updateLocUser.do.do") //보호자 조회 정보 저장
+				|| request.getRequestURI().equals("/bbs/member/joinForm.do") 
+				|| request.getRequestURI().equals("/bbs/member/checkid.do") 
+				|| request.getRequestURI().equals("/bbs/member/edituser.do") 
+				|| request.getRequestURI().equals("/bbs/member/updateLoc.do") 
+				|| request.getRequestURI().equals("/bbs/member/findId.do")
+				|| request.getRequestURI().equals("/bbs/member/editPass.do") 
+				|| request.getRequestURI().equals("/bbs/member/loginSuccess.do") 
+				|| request.getRequestURI().equals("/bbs/member/mypage.do")
+				|| request.getRequestURI().equals("/bbs/member/updateLocUser.do.do") 
 				|| request.getRequestURI().equals("/bbs/member/ajaxlogin.do")
 				|| request.getRequestURI().equals("/bbs/member/userlist.do")
 				|| request.getRequestURI().equals("/bbs/member/userlistdata.do")

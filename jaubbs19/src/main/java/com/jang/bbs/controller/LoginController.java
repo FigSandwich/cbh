@@ -30,7 +30,7 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 
-	// ·Î±×ÀÎ
+
 	@RequestMapping(value = "/login.do", method = RequestMethod.GET)
 	public String login() {
 		return "/member/login";
@@ -56,26 +56,26 @@ public class LoginController {
 			model.addAttribute("errCode", "1");
 			return "/member/login";
 
-		} else if (BCrypt.checkpw(userVO.getPasswd(), loginUser.getPasswd())) { // ÆÐ
+		} else if (BCrypt.checkpw(userVO.getPasswd(), loginUser.getPasswd())) { 
 			model.addAttribute("loginUser", loginUser);
 			session.setAttribute("userId", loginUser.getUserId());
 			session.setAttribute("passwd", loginUser.getPasswd());
 			session.setAttribute("dev_no", loginUser.getDev_no());
-			session.setAttribute("userName", loginUser.getName()); // ¼¼¼Ç¿¡ º¯¼öµî·Ï
+			session.setAttribute("userName", loginUser.getName()); 
 			return "/member/loginSuccess";
 		} else {
 			model.addAttribute("passwd", "");
-			model.addAttribute("errCode", 4);// ÆÐ½º¿öµå ºÒÀÏÄ¡
+			model.addAttribute("errCode", 4);
 			session.setAttribute("userId", loginUser.getUserId());
 			session.setAttribute("passwd", loginUser.getPasswd());
 			session.setAttribute("dev_no", loginUser.getDev_no());
-			session.setAttribute("userName", loginUser.getName()); // ¼¼¼Ç¿¡ º¯¼öµî·Ï
+			session.setAttribute("userName", loginUser.getName()); 
 			// return "/member/login";
 			return "/member/loginSuccess";
 		}
-	} // ¼öÁ¤ÇØ¾ßµÅ
+	} 
 
-	// ·Î±×¾Æ¿ô
+	
 	@RequestMapping("/logout.do")
 	public String logout(HttpSession session) {
 		session.invalidate();
@@ -83,7 +83,7 @@ public class LoginController {
 
 	}
 
-	// È¸¿ø°¡ÀÔ
+
 	@RequestMapping(value = "/joinForm.do", method = RequestMethod.GET)
 	public String joinForm(Model model) {
 		model.addAttribute("userVO", new UserVO());
@@ -91,7 +91,7 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/checkid.do", method = RequestMethod.GET)
-	public String dupCheckId(@RequestParam("userId") String userId, Model model) { // Ãâ·Â -join d
+	public String dupCheckId(@RequestParam("userId") String userId, Model model) { // ï¿½ï¿½ï¿½ -join d
 
 		String message = "";
 		int reDiv = 0;
@@ -100,12 +100,12 @@ public class LoginController {
 		System.out.println(loginuser.getUserId());
 
 		if (loginuser.getUserId().equals(userId)) {
-			message = "ÀÌ¹Ì »ç¿ëµÈ ¾ÆÀÌµð ÀÔ´Ï´Ù";
+			message = "ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Ô´Ï´ï¿½";
 			userId = "";
 			reDiv = 1;
 		} else {
 			reDiv = 1;
-			message = "»ç¿ë °¡´ÉÇÑ ¾ÆÀÌµð ÀÔ´Ï´Ù";
+			message = "ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Ô´Ï´ï¿½";
 		}
 		model.addAttribute("message", message);
 		model.addAttribute("reDiv", reDiv);
@@ -118,16 +118,16 @@ public class LoginController {
 		if (result.hasErrors()) {
 			model.addAllAttributes(result.getModel());
 			return "/member/joinForm";
-		} // passwd ¾ÏÈ£È­
+		} 
 		String hashPass = BCrypt.hashpw(userVO.getPasswd(), BCrypt.gensalt(12));
-		userVO.setPasswd(hashPass); // ¾ÏÈ£È­µÈ passwd ·Î º¯°æ
+		userVO.setPasswd(hashPass); 
 		System.out.println(userVO.toString());
 		if (this.loginService.insertUser(userVO) != 0) {
 			model.addAttribute("userVO", userVO);
-			model.addAttribute("errCode", 3);// µî·Ï¼º°ø
+			model.addAttribute("errCode", 3);
 			return "/member/login";
 		} else {
-			model.addAttribute("errCode", 5);// µî·Ï½ÇÆÐ
+			model.addAttribute("errCode", 5);
 			return "/member/joinForm";
 		}
 	}
@@ -156,8 +156,8 @@ public class LoginController {
 			object.addProperty("err", "noUser");
 			return gson.toJson(object).toString();
 		} else {
-			session.setAttribute("userId", loginUser.getUserId()); // ¼¼¼Ç¿¡ º¯¼öµî·Ï session.setAttribute("userName",
-																	// loginUser.getName()); //¼¼¼Ç¿¡ º¯¼öµî·Ï
+			session.setAttribute("userId", loginUser.getUserId()); 
+																
 			object.addProperty("id", loginUser.getUserId());
 			object.addProperty("msg", "Success");
 			object.addProperty("err", "");
@@ -165,7 +165,6 @@ public class LoginController {
 		}
 	}
 
-	// Á¤º¸ ¼öÁ¤
 	@RequestMapping(value = "/edituser.do", method = RequestMethod.GET)
 	public String toUserEditView(HttpServletRequest request, HttpSession session, Model model) {
 
@@ -174,7 +173,7 @@ public class LoginController {
 
 		if (loginUser == null) {
 			model.addAttribute("userId", "");
-			model.addAttribute("errCode", 1);// µî·ÏµÇÁö¾ÊÀº ¾ÆÀÌµð
+			model.addAttribute("errCode", 1);
 			return "/member/login";
 		}
 		model.addAttribute("userVO", loginUser);
@@ -195,17 +194,17 @@ public class LoginController {
 
 		if (this.loginService.updateUser(userVO) != 0) {
 			model.addAttribute("userVO", userVO);
-			model.addAttribute("errCode", 3);// µî·Ï¼º°ø
-			model.addAttribute("message", "´ÙÀ½°ú °°ÀÌ »ç¿ëÀÚ Á¤º¸¸¦ ¼öÁ¤ÇÏ¿´½À´Ï´Ù.");
+			model.addAttribute("errCode", 3);
+			model.addAttribute("message", "ì •ë³´ê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤. ");
 			return "/member/loginSuccess";
 		} else {
-			model.addAttribute("errCode", 5);// µî·Ï½ÇÆÐ
-			model.addAttribute("errMsg", "»ç¿ëÀÚÁ¤º¸ ¼öÁ¤¿¡ ½ÇÆÐÇÏ¿´½À´Ï´Ù.");
+			model.addAttribute("errCode", 5);
+			model.addAttribute("errMsg", "ì •ë³´ê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			return "/member/editForm";
 		}
 	}
 
-	// ±â±âÄÚµå ÀúÀå
+
 	@RequestMapping(value = "/updateLoc.do", method = RequestMethod.GET)
 	public String updateLoc(HttpServletRequest request, HttpSession session, Model model) {
 
@@ -214,7 +213,7 @@ public class LoginController {
 
 		if (loginUser == null) {
 			model.addAttribute("userId", "");
-			model.addAttribute("errCode", 1);// µî·ÏµÇÁö¾ÊÀº ¾ÆÀÌµð
+			model.addAttribute("errCode", 1);
 			return "/member/mypage";
 		}
 		model.addAttribute("userVO", loginUser);
@@ -235,17 +234,17 @@ public class LoginController {
 
 		if (this.loginService.updateLoc(userVO) != 0) {
 			model.addAttribute("userVO", userVO);
-			model.addAttribute("errCode", 3);// µî·Ï¼º°ø
-			model.addAttribute("message", "´ÙÀ½°ú °°ÀÌ »ç¿ëÀÚ Á¤º¸¸¦ ¼öÁ¤ÇÏ¿´½À´Ï´Ù.");
+			model.addAttribute("errCode", 3);
+			model.addAttribute("message", "ì •ë³´ê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			return "/member/loginSuccess";
 		} else {
-			model.addAttribute("errCode", 5);// µî·Ï½ÇÆÐ
-			model.addAttribute("errMsg", "»ç¿ëÀÚÁ¤º¸ ¼öÁ¤¿¡ ½ÇÆÐÇÏ¿´½À´Ï´Ù.");
+			model.addAttribute("errCode", 5);
+			model.addAttribute("errMsg", "ì •ë³´ê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			return "/member/updateLoc";
 		}
 	}
 
-	// º¸È£ÀÚ Á¶È¸
+
 	@RequestMapping(value = "/LocUser.do", method = RequestMethod.GET)
 	public String LocUser(@ModelAttribute("UserVO") UserVO userVO, Model model, HttpSession session) throws Exception {
 
@@ -255,7 +254,7 @@ public class LoginController {
 		return "member/LocUser";
 	}
 	
-	//º¸È£ÀÚ Á¤º¸ Á¶È¸ ¼öÁ¤
+
 	@RequestMapping(value = "/updateLocUser.do", method = RequestMethod.GET)
 	public String updateLocUser(HttpServletRequest request, HttpSession session, Model model) {
 
@@ -264,7 +263,7 @@ public class LoginController {
 
 		if (loginUser == null) {
 			model.addAttribute("userId", "");
-			model.addAttribute("errCode", 1);// µî·ÏµÇÁö¾ÊÀº ¾ÆÀÌµð
+			model.addAttribute("errCode", 1);
 			return "/member/mypage";
 		}
 		model.addAttribute("userVO", loginUser);
@@ -285,19 +284,19 @@ public class LoginController {
 
 		if (this.loginService.updateLocUser(userVO) != 0) {
 			model.addAttribute("userVO", userVO);
-			model.addAttribute("errCode", 3);// µî·Ï¼º°ø
-			model.addAttribute("message", "´ÙÀ½°ú °°ÀÌ »ç¿ëÀÚ Á¤º¸¸¦ ¼öÁ¤ÇÏ¿´½À´Ï´Ù.");
+			model.addAttribute("errCode", 3);
+			model.addAttribute("message", "ì •ë³´ê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			return "/member/loginSuccess";
 		} else {
-			model.addAttribute("errCode", 5);// µî·Ï½ÇÆÐ
-			model.addAttribute("errMsg", "»ç¿ëÀÚÁ¤º¸ ¼öÁ¤¿¡ ½ÇÆÐÇÏ¿´½À´Ï´Ù.");
+			model.addAttribute("errCode", 5);
+			model.addAttribute("errMsg", "ì •ë³´ê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			return "/member/updateLocUser";
 		}
 	}
 	
 	
 
-	// id Ã£±â
+
 	@RequestMapping(value = "/findId.do", method = RequestMethod.GET)
 	public String findId(Model model) {
 		return "/member/findId";
@@ -322,7 +321,6 @@ public class LoginController {
 		}
 	}
 
-	// ºñ¹ø Ã£±â
 	@RequestMapping(value = "/findPass.do", method = RequestMethod.GET)
 	public String findPass(Model model) {
 		return "/member/findPass";
@@ -354,7 +352,7 @@ public class LoginController {
 	public String onEditpassSave(@Valid UserVO userVO, BindingResult result, Model model) throws Exception {
 		if (result.hasFieldErrors("userId") || result.hasFieldErrors("email")) {
 			model.addAllAttributes(result.getModel());
-			System.out.println("result ¿À·ù!");
+			System.out.println("result ï¿½ï¿½ï¿½ï¿½!");
 			return "/member/editPass";
 		}
 		userVO.setPasswd(BCrypt.hashpw(userVO.getPasswd(), BCrypt.gensalt(12)));
@@ -367,9 +365,8 @@ public class LoginController {
 			model.addAllAttributes(result.getModel());
 			return "/member/editPass";
 		}
-	} //°íÄ¥±î¸»±î
-	
-	//¸¶ÀÌÆäÀÌÁö
+	} 
+
 	@RequestMapping(value = "/mypage.do", method = RequestMethod.GET)
 	public String mypage(HttpServletRequest request, HttpSession session, Model model) {
 
@@ -378,7 +375,7 @@ public class LoginController {
 
 		if (loginUser == null) {
 			model.addAttribute("userId", "");
-			model.addAttribute("errCode", 1);// µî·ÏµÇÁö¾ÊÀº ¾ÆÀÌµð
+			model.addAttribute("errCode", 1);
 			return "/member/loginSuccess";
 		}
 		model.addAttribute("userVO", loginUser);
@@ -388,7 +385,7 @@ public class LoginController {
 	}
 	
 	
-	// ¸ðµçÈ¸¿ø	
+		
 	@RequestMapping(value = "/userlist.do", method = RequestMethod.GET)
 	public String userlist(@ModelAttribute("UserVO") UserVO userVO, Model model, HttpSession session) throws Exception {
 
@@ -398,7 +395,7 @@ public class LoginController {
 		return "member/userlist";
 	}
 	
-	// ¸ðµçÈ¸¿ø »ó¼¼º¸±â
+
 	@RequestMapping(value = "/userlistdata.do", method = RequestMethod.GET)
 	public String userlistdata(@ModelAttribute("UserVO") UserVO userVO, Model model, HttpSession session) throws Exception {
 

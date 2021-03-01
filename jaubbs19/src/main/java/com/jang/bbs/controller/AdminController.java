@@ -29,13 +29,13 @@ public class AdminController {
 	@Autowired
 	private NoticeService noticeService;
 
-	// 로그인
+
 	@RequestMapping(value = "/adminlogin.do", method = RequestMethod.GET)
 	public String login() {
 		return "/admin/adminlogin";
 	}
 
-	// 마이페이지
+	
 	@RequestMapping(value = "/adminpage.do", method = RequestMethod.GET)
 	public String adminpage(HttpServletRequest request, HttpSession session, Model model) {
 
@@ -44,7 +44,7 @@ public class AdminController {
 
 		if (loginAdmin == null) {
 			model.addAttribute("adminid", "");
-			model.addAttribute("errCode", 1);// 등록되지않은 아이디
+			model.addAttribute("errCode", 1);
 			return "/admin/adminlogin";
 		}
 		model.addAttribute("AdminVO", loginAdmin);
@@ -76,7 +76,7 @@ public class AdminController {
 
 	}
 
-	// 로그아웃
+	
 	@RequestMapping("/adminlogout.do")
 	public String logout(HttpSession session) {
 		session.invalidate();
@@ -84,14 +84,13 @@ public class AdminController {
 
 	}
 
-	//////// 모바일///////////////////////////////////////////////////////
-	// 로그인
+
 	@RequestMapping(value = "/m.adminlogin.do", method = RequestMethod.GET)
 	public String mlogin() {
 		return "/admin/madminlogin";
 	}
 
-	// 마이페이지
+
 	@RequestMapping(value = "/m.adminpage.do", method = RequestMethod.GET)
 	public String madminpage(HttpServletRequest request, HttpSession session, Model model) {
 
@@ -100,7 +99,7 @@ public class AdminController {
 
 		if (loginAdmin == null) {
 			model.addAttribute("adminid", "");
-			model.addAttribute("errCode", 1);// 등록되지않은 아이디
+			model.addAttribute("errCode", 1);
 			return "/admin/adminlogin";
 		}
 		model.addAttribute("AdminVO", loginAdmin);
@@ -131,7 +130,7 @@ public class AdminController {
 		}
 	}
 
-	// 로그아웃
+
 	@RequestMapping("/m.adminlogout.do")
 	public String mlogout(HttpSession session) {
 		session.invalidate();
@@ -139,7 +138,7 @@ public class AdminController {
 
 	}
 	
-	//공지사항 조회
+
 	@RequestMapping(value = "/notice.do", method = RequestMethod.GET)
 	public String notice(@ModelAttribute("NoticeVO") NoticeVO noticeVO, Model model, HttpSession session) throws Exception {
 
@@ -149,7 +148,7 @@ public class AdminController {
 		return "/admin/notice";
 	}
 	
-	//공지사항 입력
+
 	@RequestMapping(value = "/insertnotice.do", method = RequestMethod.GET)
 	public String insertnotice(@ModelAttribute("NoticeVO") NoticeVO noticeVO, HttpSession session,
 			HttpServletRequest request) throws Exception {

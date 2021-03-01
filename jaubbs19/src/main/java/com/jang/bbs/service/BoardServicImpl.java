@@ -196,21 +196,18 @@ public class BoardServicImpl implements BoardService {
 	}
 
 	public int addBoardView(BoardViewVO boardView) {
-		// userid-글번호 조회 기록 추가
+	
 		return this.boardMapper.addBoardView(boardView);
 	}
 
 	public int increaseViewCnt(int bno) {
-
-		// 글번호 조회수 증가
 
 		return this.boardMapper.incrementViewCnt(bno);
 	}
 
 	public int getBoardView(BoardViewVO boardView) {
 
-		// userid-글번호 조회 기록 읽기
-
+	
 		return this.boardMapper.getBoardView(boardView);
 
 	}

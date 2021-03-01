@@ -4,9 +4,9 @@ import javax.validation.constraints.NotEmpty;
 
 public class AdminVO {
 	
-	@NotEmpty(message = "id ¸¦ ÀÔ·ÂÇÏ¼¼¿ä")
+	@NotEmpty(message = "id ë¥¼ ìž…ë ¥í•´ì£¼ì„¸ìš” ")
 	private String adminid;
-	@NotEmpty(message = "ÆÐ½º¿öµå ¸¦ ÀÔ·ÂÇÏ¼¼¿ä")
+	@NotEmpty(message = "pwdë¥¼ ìž…ë ¥í•´ì£¼ì„¸ìš”")
 	private String password;
 	private String name;
 	
