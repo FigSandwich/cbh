@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jang.bbs.mapper.LocationMapper">
+	<!-- 위치추적  -->
+	<select id="getLocation"  resultType="Location">
+	 <!--
+	SELECT DEV_NO, LAT, LON, TIME
+		FROM CB_LOCATION
+		WHERE DEV_NO = 'dev_01'
+	-->
+	
+		SELECT c.DEV_NO, LAT, LON, TIME, b.dev_no
+		FROM CB_LOCATION c
+		inner join bbs_member b on c.dev_no = b.dev_no
+		WHERE c.DEV_NO = #{dev_no, jdbcType=VARCHAR}
+	
+	
+	<!--   
+	SELECT c.DEV_NO, LAT, LON, TIME
+		FROM CB_LOCATION c, bbs_member b
+		WHERE c.DEV_NO = #{dev_no, jdbcType=VARCHAR}
+	-->
+		
+	</select>
+	
+	<!-- 위치저장  -->
+	<insert id="insertLoc">
+		INSERT INTO CB_LOCATION
+		VALUES(#{dev_no},#{lat, jdbcType=VARCHAR},#{lon, jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<!-- 회원별 위치 조회 -->
+	<select id="getuserlistLoc"  resultType="Location">
+		SELECT *
+		FROM CB_LOCATION
+		WHERE DEV_NO=#{dev_no, jdbcType=VARCHAR}
+	</select>
+</mapper>

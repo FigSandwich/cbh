@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jang.bbs.mapper.LoginMapper">
+	<!-- 로그인  -->
+	<select id="findUser" parameterType="UserVO" resultType="UserVO">
+		SELECT
+		userid, passwd, name
+		FROM bbs_member
+		WHERE userid =#{userId} AND passwd = #{passwd}
+	</select>
+
+	
+	<!-- 아이디 중복체크 -->
+	<select id="getUser" parameterType="String" resultType="UserVO">
+		SELECT *
+		FROM bbs_member
+		WHERE userid= #{userId}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="insertUser" keyProperty="mno">
+		<selectKey keyProperty="mno" resultType="int"
+			order="BEFORE">SELECT COALESCE (MAX(mno),0)+1 AS mno
+			FROM bbs_member
+		</selectKey>
+		INSERT INTO bbs_member ( mno , name , passwd , userid , jumin , email, phone, dev_no)
+		VALUES (#{mno}, #{name}, #{passwd}, #{userId},#{jumin},#{email}, #{phone}, #{dev_no} )
+	</insert>
+
+	<!-- 정보수정  -->
+	<update id="updateUser" parameterType="UserVO">
+		UPDATE bbs_member
+		SET mno=#{mno, jdbcType=VARCHAR},userid=#{userId, jdbcType=VARCHAR}, passwd= #{passwd, jdbcType=VARCHAR},name= #{name, jdbcType=VARCHAR} ,email= #{email, jdbcType=VARCHAR}, phone= #{phone, jdbcType=VARCHAR}, jumin= #{jumin, jdbcType=VARCHAR}
+		WHERE userid = #{userId}
+	</update>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findId" parameterType="UserVO" resultType="UserVO">
+		SELECT
+		userId, email, name
+		FROM bbs_member
+		WHERE email = #{email} AND name = #{name}
+		<!-- WHERE name = #{name} AND jumin = #{jumin} AND email = #{email} -->
+	</select>
+	
+	<!-- 비번찾기  -->
+	<select id="findPass" parameterType="UserVO" resultType="UserVO">
+		SELECT *
+		FROM bbs_member
+		WHERE userId = #{userId}, name = #{name}, email = #{email}
+	</select>
+	
+	<update id="updatePass">
+		UPDATE bbs_member
+		SET
+		passwd = #{passwd}
+		WHERE userId = #{userId}
+	</update>
+
+	
+	<!-- 기기등록  -->
+	<update id="updateLoc" parameterType="UserVO">
+		UPDATE bbs_member
+		SET mno=#{mno, jdbcType=VARCHAR}, dev_no=#{dev_no, jdbcType=VARCHAR}
+		WHERE userid = #{userId}
+	</update>
+	
+	<!-- 보호자 정보 조회 -->
+	<select id="getLocUser"  resultType="UserVO">
+		SELECT name, email, phone, dev_no, memo, missing
+		FROM bbs_member
+		WHERE DEV_NO=#{dev_no, jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 보호자 정보 수정-->
+	<update id="updateLocUser" parameterType="UserVO">
+		UPDATE bbs_member
+		SET mno=#{mno, jdbcType=VARCHAR},
+		memo = #{memo, jdbcType=VARCHAR},
+		missing = #{missing, jdbcType=VARCHAR}
+		WHERE userid = #{userId}
+	</update>
+	
+	<!-- 로그인테이블 dev_no조회  -->
+	<select id="getDev_no" parameterType="String" resultType="UserVO">
+		SELECT *
+		FROM bbs_member
+		WHERE dev_no= #{dev_no}
+	</select>
+	
+	<!-- 모든회원 -->
+	<select id="getuserlist"  resultType="UserVO">	
+		SELECT *
+		FROM bbs_member
+	</select>
+	
+	<select id="getuserlistdata"  resultType="UserVO">	
+		SELECT *
+		FROM bbs_member
+		where mno= #{mno}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

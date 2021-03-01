@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jang.bbs.mapper.BoardMapper">
+	<select id="getBoardList" parameterType="SearchVO"
+		resultType="BoardVO">
+		SELECT
+		bno,title,writerId,replycnt,viewcnt,to_char(regDate,'YYYY-MM-DD
+		HH24:MI')
+		regDate, recommendcnt
+		FROM(SELECT ROWNUM AS rnum, a.*
+		FROM(SELECT * FROM bbs_board WHERE del_yn='n'
+		order by bno desc) a)
+		WHERE rnum between #{startRow} and #{endRow}
+
+	</select>
+	<select id="getTotalRow" parameterType="SearchVO"
+		resultType="int">
+		SELECT count(*) AS totalrow FROM bbs_board WHERE del_yn='n'
+	</select>
+	<select id="getArticle" resultType="BoardVO">
+		SELECT
+		bno,title,content,writerId,to_char(regDate,'YYYY-MM-DD
+		HH24:MI')
+		regDate,viewcnt,replycnt,recommendcnt
+		FROM bbs_board
+		WHERE
+		bno=#{bno}
+	</select>
+	<insert id="writeArticle" keyProperty="bno">
+		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
+			SELECT
+			COALESCE(MAX(bno),0)+1 AS bno FROM bbs_board
+		</selectKey>
+		INSERT INTO bbs_board(bno,title,content,writeId)
+		VALUES(#{bno,#{title},#{content},#{writerId})
+	</insert>
+	<update id="updateArticle">
+		UPDATE bbs_board SET title = #{title}m
+		content=#{content}, writerId =
+		#{writerId}, viewcnt=#{viewcnt}
+		WHERE bno
+		= #{bno}
+	</update>
+
+	<delete id="deleteArticle">
+		DELETE FROM bbs_board WHERE bno =#{bno}
+	</delete>
+
+	<update id="incrementViewCnt">
+		UPDATE bbs_board SET viewcnt = viewcnt+1 WHERE bnp =
+		#{bno}
+	</update>
+
+	<update id="incrementGoodCnt">
+		UPDATE bbs_board SET recommendcnt=recommendcnt+1
+		WHERE bno =#{bno}
+	</update>
+
+	<update id="incrementReplyCnt">
+		UPDATE bbs_board SET replycnt = replycnt+1 WHERE bno
+		=#{bno}
+	</update>
+
+	<select id="getReplyList" resultType="ReplyVO">
+		SELECT
+		rno,bno,recommendcnt,multicnt,to_char(regDate,'YYYY-MM-DD
+		HH24:MI')
+		regDate, writerId FROM bbs_reply WHERE bno = #{bno} and del_yn='n'
+	</select>
+
+	<select id="getReply" resultType="ReplyVO">
+		SELECT
+		rno,bno,content,writerId, regDate FROM bbs_reply WHERE rno=#{rno}
+	</select>
+
+	<insert id="writeReply" keyProperty="rno">
+		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+			SELECT
+			COALESCE(MAX(rno),0) + AS rno FROM bbs_reply
+		</selectKey>
+
+		INSERT INTO bbs_reply (rno , bno,content,writerId)
+		VALUES(#{rno),#{bno},#{content},#{writerId})
+	</insert>
+	<update id="updateReply">
+		UPDATE bbs_reply SET content = #{content}, writerId =
+		#{writerId},
+		regDate=#{regDate}
+		WHERE rno = #{rno}
+	</update>
+	<delete id="deleteReply">
+		DELETE FROM bbs_reply WHERE rno=#{rno}
+	</delete>
+	<delete id="deleteReplyBybno">
+		DELETE FROM bbs_reply WHERE bno =#{bno
+	</delete>
+
+	<update id="incReplyGoodCnt">
+		UPDATE bbs_reply SET recommendcnt = recommendcnt+1
+		WHere rno=#{rno}
+	</update>
+
+
+	<select id="getFilelist" resultType="AttFileVO">
+		SELECT fno , bno , ofilename
+		, sfilename , filesize FROM bbs_file WHERE
+		bno=#{bno} )
+	</select>
+	<select id="getFileName" resultType="String" parameterType="int">
+		SELECT ofilename
+		FROM
+		bbs_file
+		WHERE fno=#{fno}
+	</select>
+	<insert id="insertFile" keyProperty="fno">
+		<selectKey keyProperty="fno" resultType="int" order="BEFORE">
+			SELECT
+			COALESCE (MAX(fno), 0) + 1 AS fno
+			FROM
+			bbs_file
+		</selectKey>
+		INSERT INTO bbs_file (fno, bno, ofilename, sfilename, filesize )
+		VALUES (#{fno}, #{bno}, #{ofilename}, #{sfilename}, #{filesize}
+	</insert>
+	<delete id="deleteFile">
+		DELETE FROM bbs file
+		WHERE fno #{fno}
+	</delete>
+	<delete id="deleteFileBybno">
+		DELETE FROM bbs_file WHERE bno #{bno}
+	</delete>
+	<insert id="addBoardLike" keyProperty="blno">
+
+
+		<selectKey keyProperty="blno" resultType="int"
+			order="BEFORE">
+			SELECT COALESCE (MAX(blno),0) + 1 AS blno FROM bbs_boardlike
+		</selectKey>
+		INSERT INTO bbs_boardlike (blno, bno, userId)
+		VALUES (#(blno}, #(bno},
+		# ( userId))
+	</insert>
+
+	<select id="getBoardLike" resultType="int">
+		SELECT COALESCE
+		(MAX(bno),0) AS bno FROM bbs_boardlike
+		WHERE userId=#{userId} AND
+		bno=#{bno}
+	</select>
+	<insert id="addReplyLike" keyProperty="rlno">
+		<selectKey keyProperty="rlno" resultType="int"
+			order="BEFORE">
+			SELECT COALESCE (MAX(rlno), 0) +1 AS rlno FROM bbs_replylike
+
+		</selectKey>
+		INSERT INTO bbs_replylike (rlno, rno, userId)
+		VALUES(#{rlno}, #{cno},
+		#{userId})
+	</insert>
+	<select id="getReplyLike" resultType="int ">
+		SELECT COALESCE
+		(MAX(rno),0) AS rno FROM bbs_replylike
+		WHERE userId= #{userId} AND
+		rno=#{rno}
+
+	</select>
+	<insert id="addBoardView" keyProperty="bvno">
+		<selectKey keyProperty="bvno" resultType="int"
+			order="BEFORE">
+			SELECT COALESCE (MAX(byno), 0) +1 AS bvno
+			FROM bbs_boardview
+
+		</selectKey>
+		INSERT INTO bbs_boardview(bvno, bno, userId, mem_yn)
+		VALUES
+		(#{bvno},#{bno}, #{userId}, #{mem_yn})
+	</insert>
+	<select id="getBoardView" resultType="int">
+		SELECT COALESCE (MAX(bno,0)
+		AS bno FROM bbs_boardview WHERE userId=#{userId}
+		AND bno=#{bno}
+	</select>
+</mapper>
