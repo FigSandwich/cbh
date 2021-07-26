@@ -24,13 +24,13 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@168.126.146.45:1521:orcl</value>
+			<value>jdbc:oracle:thin:@?:?:orcl</value>
 		</property>
 		<property name="username">
-			<value>20142461</value>
+			<value>?</value>
 		</property>
 		<property name="password">
-			<value>950603</value>
+			<value>?</value>
 		</property>
 		<property name="maxTotal">
 			<value>2</value>
