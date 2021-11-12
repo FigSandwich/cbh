@@ -1,0 +1,299 @@
+ //와이파이통신을 위한 라이브러리호출
+
+      #include <ESP8266WiFi.h>
+
+      //와이파이로 HTTP 통신을 위한 라이브러리 호츌
+
+      #include <ESP8266HTTPClient.h>
+
+      //와이파이통신을 위한 라이브러리호출(보드에 내장된 TX RX핀)
+
+      #include <SoftwareSerial.h>
+
+      //GPS좌표값 계산을 위한 라이브러리 호출
+
+      #include <TinyGPS.h>  
+
+      #ifndef STASSID
+
+      #define STASSID "test" //접속할 와이파이ssid
+
+      #define STAPSK  "1q2w3e4r" //접속할 와이파이 비밀번호
+
+      #endif 
+      const char* ssid = STASSID;
+
+      const char* password = STAPSK; 
+
+      String host = "http://192.168.43.57:8080"; //접속할 웹서버 주소 
+
+      // 지연시간 설정
+
+      const long interval = 5000;
+
+      unsigned long previousMillis = 0; 
+
+      //와이파이 서버와 클라이언트 생성 포트 80사용
+
+      WiFiServer server(80);
+
+      WiFiClient client;
+
+      HTTPClient http;
+
+      long lat,lon;
+
+      SoftwareSerial gpsSerial(4,5);
+
+      TinyGPS gps;  
+
+      // Create an instance of the server
+
+      // specify the port to listen on as an argument
+
+      //부저에 할당할 핀번호
+
+      int speakerpin = 2;
+
+      //부저에서 나타낼 소리의 배열
+
+      int note[] = {2093,2349,2637,2093 ,2637,2093,2637, 2349,2637,2793,2793,2637,2349,2793 }; 
+
+      void setup() {
+
+        Serial.begin(115200);
+
+        gpsSerial.begin(9600); 
+
+        // 와이파이 접속
+
+        Serial.println();
+
+        Serial.println();
+
+        Serial.print(F("Connecting to "));
+
+        Serial.println(ssid); 
+
+        WiFi.mode(WIFI_STA);
+
+        WiFi.begin(ssid, password); 
+
+        while (WiFi.status() != WL_CONNECTED) {
+
+          delay(500);
+
+          Serial.print(".");
+
+   }
+
+        Serial.println("");
+
+     Serial.print("Connecting to ");
+
+        Serial.println(ssid);
+
+        Serial.print("IP address: ");
+
+        Serial.println(WiFi.localIP());
+
+     server.begin();
+
+     Serial.println("Server started");
+
+      }
+
+      void loop() {
+
+      // gps가 작동하는지 확인 
+
+    while(gpsSerial.available()){   
+
+      // gps값 인코딩
+
+       if(gps.encode(gpsSerial.read())){
+
+      // 위도 경도값 받기
+
+            gps.get_position(&lat,&lon);
+
+      // 위도경도 값 변수 저장
+
+            float realLat = lat;
+
+            float realLon = lon;
+
+      //위도 경도 표기법 변환
+
+            float realrealLat = (realLat /1000000,7);
+
+            float realrealLon =(realLon /1000000,7);
+
+      //위도경도를 문자형으로 변환
+
+            String strLat = String(realLat /1000000,7);
+
+            String strLon = String(realLon /1000000,7);
+
+           
+
+            //Serial.print("Position: ");
+
+            //Serial.print("lat: ");
+
+            Serial.print(realLat/1000000,7); 
+
+              //Serial.print(" ");// print latitude
+
+            //Serial.print("lon: "); 
+
+            Serial.println(realLon/1000000,7); // print longitude
+
+              unsigned long currentMillis = millis();
+
+        if(currentMillis - previousMillis >= interval) {
+
+          previousMillis = currentMillis;
+
+         
+
+      //특정 웹페이지에 위도경도 값을 전송하기위한 주소 생성
+
+      String phpHost = host+"/bbs/location/iamhere.do?dev_no=dev_01&lat="+strLat+"&lon="+strLon;
+
+          Serial.print("Connect to ");
+
+          Serial.println(phpHost);
+
+          //웹페이지에 접속(위도경도값 전송)
+
+          http.begin(client, phpHost);
+
+          http.setTimeout(1000);
+
+          int httpCode = http.GET();
+
+         Serial.println(httpCode);
+
+          if(httpCode > 0) {
+
+            Serial.printf("GET code : %d\n\n", httpCode);
+
+          }
+
+          else {
+
+            Serial.printf("GET failed, error: %s\n",        http.errorToString(httpCode).c_str());
+
+          }
+
+          http.end();}}} 
+
+      // 웹서버를 생성하는 부분
+
+        WiFiClient client = server.available();
+
+        if (!client) {
+
+          return;
+
+        }
+
+        Serial.println(F("new client")); 
+
+       client.setTimeout(5000); // default is 1000 
+
+       String req = client.readStringUntil('\r');
+
+       Serial.println(F("request: "));
+
+       Serial.println(req); 
+
+      //웹서버를 통해 받은 명령을 처리하는 부분
+
+      //부저를 울리는 부분
+
+        int val;
+
+        if (req.indexOf(F("/gpio/0")) != -1) {
+
+          val = 0;
+
+          int elementCount = sizeof(note) / sizeof(int); 
+
+          for(int i=0; i<10; i++ ){
+
+            for (int i=0; i < elementCount; i++)   //note 을  play
+
+            {
+
+              tone(speakerpin,note[i],500);
+
+              delay(300);
+
+              }
+
+              delay(300);
+
+              }
+
+   
+
+        } else if (req.indexOf(F("/gpio/1")) != -1) {
+
+          val = 1;
+
+        } else {
+
+          Serial.println(F("invalid request"));
+
+          val = digitalRead(LED_BUILTIN);
+
+        } 
+ 
+
+   // Set LED according to the request
+
+   digitalWrite(LED_BUILTIN, val); 
+
+      // read/ignore the rest of the request
+
+      //웹서버의 페이지를 구성하는 부분
+
+      // do not client.flush(): it is for output only, see below
+
+        while (client.available()) {
+
+          // byte by byte is not very efficient
+
+          client.read();
+
+        } 
+
+        // Send the response to the client
+
+        // it is OK for multiple small client.print/write,
+
+        // because nagle algorithm will group them into one single packet
+
+        client.print(F("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n
+
+        <!DOCTYPE HTML>\r\n<html>")); 
+
+        client.print(F("<a href='http://"));
+
+        client.print(WiFi.localIP());
+
+        client.print(F("/gpio/0'>call</a></html>")); 
+        // The client will actually be *flushed* then disconnected
+
+        // when the function returns and 'client' object is destroyed(out-of-scope)
+
+        // flush = ensure written data are received by the other side
+
+        Serial.println(F("Disconnecting from client"));
+
+      } 
+ 
+ 
+ 
